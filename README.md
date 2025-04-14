@@ -7,6 +7,7 @@ This repository is dedicated to the development of a custom transformer model fo
 - **data_preprocessing**: Contains scripts for processing raw text data, including tokenization, formatting, and preparation for model input.
 - **model_architecture**: Includes implementations of the transformer model, such as encoding layers, attention mechanisms, and feed-forward networks.
 - **training_evaluation**: Scripts for training the model, optimizing parameters, and evaluating performance using metrics like accuracy, loss, and perplexity.
+- **tests**: Scripts for testing Scripts of the whole project(different levels of testing).
 
 ## Goals
 - Develop a transformer model from scratch based on the Penn Treebank dataset.
