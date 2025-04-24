@@ -5,19 +5,21 @@ from .positional_encoding import PositionalEncoding
 from .multiheadattention import MultiHeadAttention
 from .feedforward import FeedFoward
 from .block import Block 
+from data_preprocessing.embedding import TokenEmbedding
 
 class Decoder(nn.Module):
-    def __init__(self, vocab_size, n_embd, n_head, n_layer, dropout, block_size):
+    def __init__(self, vocab_size, n_embd, n_head, n_layer, dropout, block_size, pad_idx=0):
         super().__init__()
-        self.token_embedding = nn.Embedding(vocab_size, n_embd)
+        self.token_embedding = TokenEmbedding(vocab_size, n_embd, pad_idx=pad_idx)
         self.position_embedding = PositionalEncoding(n_embd, dropout, max_len=block_size)
-        self.blocks = nn.Sequential(*[Block(n_embd, n_head) for _ in range(n_layer)])
+        self.blocks = nn.Sequential(*[Block(n_embd, n_head, block_size, dropout) for _ in range(n_layer)])
         self.ln_f = nn.LayerNorm(n_embd)
         self.head = nn.Linear(n_embd, vocab_size)
         self.dropout = nn.Dropout(dropout)
+        self.pad_idx = pad_idx
         self.block_size = block_size
 
-        # Initialize weights (optional, but good practice)
+        # Initialize weights
         self.apply(self._init_weights)
 
     def _init_weights(self, module):

@@ -43,6 +43,7 @@ def get_data(batch_size):
     test_data  = batcher(tokener(test, vocab), batch_size)
 
     return train_data, valid_data, test_data, vocab
+
 """
 if __name__ == '__main__':
     train_data, valid_data, test_data, vocab = get_data(32)
