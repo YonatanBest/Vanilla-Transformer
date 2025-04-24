@@ -1,7 +1,10 @@
+import torch.nn as nn
+import torch.nn.functional as F
+import torch
 class Head(nn.Module):
     """ one head of self-attention """
 
-    def __init__(self, head_size):
+    def __init__(self, head_size, n_embd, block_size, dropout):
         super().__init__()
         self.key = nn.Linear(n_embd, head_size, bias=False)
         self.query = nn.Linear(n_embd, head_size, bias=False)
@@ -27,7 +30,7 @@ class Head(nn.Module):
 class MultiHeadAttention(nn.Module):
     """ multiple heads of self-attention in parallel """
 
-    def __init__(self, num_heads, head_size):
+    def __init__(self, num_heads, head_size, n_embd, dropout):
         super().__init__()
         self.heads = nn.ModuleList([Head(head_size) for _ in range(num_heads)])
         self.proj = nn.Linear(n_embd, n_embd)
