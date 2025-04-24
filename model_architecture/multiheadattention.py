@@ -19,7 +19,7 @@ class Head(nn.Module):
         # compute attention scores ("affinities")
         wei = q @ k.transpose(-2,-1) * C**-0.5 # (B, T, C) @ (B, C, T) -> (B, T, T)
         wei = wei.masked_fill(self.tril[:T, :T] == 0, float('-inf')) # (B, T, T)
-        wei = F.softmax(wei, dim=-1) # (B, T, T)
+        wei = nn.F.softmax(wei, dim=-1) # (B, T, T)
         wei = self.dropout(wei)
         # perform the weighted aggregation of the values
         v = self.value(x) # (B,T,C)
@@ -29,7 +29,7 @@ class Head(nn.Module):
 class MultiHeadAttention(nn.Module):
     """ multiple heads of self-attention in parallel """
 
-    def __init__(self, num_heads, head_size):
+    def __init__(self, num_heads, head_size, n_embd, dropout):
         super().__init__()
         self.heads = nn.ModuleList([Head(head_size) for _ in range(num_heads)])
         self.proj = nn.Linear(n_embd, n_embd)
