@@ -1,5 +1,5 @@
 import torch.nn as nn
-from preprocessing import get_data
+from .preprocessing import get_data
 
 class TokenEmbedding(nn.Module):
     def __init__(self, vocab_size, embed_dim, pad_idx=0):

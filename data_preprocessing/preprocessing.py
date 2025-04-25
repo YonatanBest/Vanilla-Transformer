@@ -26,21 +26,27 @@ def tokener(tokens, vocab):
     return torch.tensor(vocab.encode(tokens))
 
 
-def batcher(data, batch_size):
-    nbatch = data.size(0) // batch_size
-    data = data.narrow(0, 0, nbatch * batch_size)
-    return data.view(batch_size, -1).t().contiguous()
+# def batcher(data, batch_size):
+#     nbatch = data.size(0) // batch_size
+#     data = data.narrow(0, 0, nbatch * batch_size)
+#     return data.view(batch_size, -1).t().contiguous()
 
 def get_data(batch_size):
-    train = load('ptbdataset/ptb.train.txt')
-    valid = load('ptbdataset/ptb.valid.txt')
-    test  = load('ptbdataset/ptb.test.txt')
+    # train = load('ptbdataset/ptb.train.txt')
+    # valid = load('ptbdataset/ptb.valid.txt')
+    # test  = load('ptbdataset/ptb.test.txt')
+    train = load('data_preprocessing/ptbdataset/ptb.train.txt')
+    valid = load('data_preprocessing/ptbdataset/ptb.valid.txt')
+    test  = load('data_preprocessing/ptbdataset/ptb.test.txt')
 
     vocab = Vocab(train)
 
-    train_data = batcher(tokener(train, vocab), batch_size)
-    valid_data = batcher(tokener(valid, vocab), batch_size)
-    test_data  = batcher(tokener(test, vocab), batch_size)
+    # train_data = batcher(tokener(train, vocab), batch_size)
+    # valid_data = batcher(tokener(valid, vocab), batch_size)
+    # test_data  = batcher(tokener(test, vocab), batch_size)
+    train_data = tokener(train, vocab)
+    valid_data = tokener(valid, vocab)
+    test_data = tokener(test, vocab)
 
     return train_data, valid_data, test_data, vocab
 
