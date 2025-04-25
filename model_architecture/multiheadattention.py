@@ -30,13 +30,16 @@ class Head(nn.Module):
 class MultiHeadAttention(nn.Module):
     """ multiple heads of self-attention in parallel """
 
-    def __init__(self, num_heads, head_size, n_embd, dropout):
+    def __init__(self, num_heads, head_size, n_embd, dropout, block_size):
         super().__init__()
-        self.heads = nn.ModuleList([Head(head_size) for _ in range(num_heads)])
+        self.heads = nn.ModuleList([Head(head_size, n_embd, block_size, dropout) for _ in range(num_heads)])
         self.proj = nn.Linear(n_embd, n_embd)
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, x):
-        out = torch.cat([h(x) for h in self.heads], dim=-1)
+        head_outputs = [h(x) for h in self.heads]
+        # print(f"Shape of head_outputs[0]: {head_outputs[0].shape}")
+        out = torch.cat(head_outputs, dim=-1)
+        # print(f"Shape of concatenated out: {out.shape}")
         out = self.dropout(self.proj(out))
         return out

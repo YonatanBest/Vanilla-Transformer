@@ -3,6 +3,10 @@ import torch.nn as nn
 import torch.nn.functional as F
 from .positional_encoding import PositionalEncoding
 from .block import Block 
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from data_preprocessing.embedding import TokenEmbedding
 
 class Decoder(nn.Module):
@@ -36,7 +40,8 @@ class Decoder(nn.Module):
 
         # Embed tokens and add positional encoding
         tok_emb = self.token_embedding(idx) 
-        pos_emb = self.position_embedding(torch.arange(T, device=idx.device)) # (T, n_embd)
+        # pos_emb = self.position_embedding(torch.arange(T, device=idx.device)) # (T, n_embd)
+        pos_emb = self.position_embedding(tok_emb)
         x = self.dropout(tok_emb + pos_emb) 
         x = self.blocks(x)
 
