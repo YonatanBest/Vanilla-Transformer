@@ -3,8 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from .positional_encoding import PositionalEncoding
 from .block import Block 
-import sys
-import os
+import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from data_preprocessing.embedding import TokenEmbedding
