@@ -7,8 +7,9 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from model_architecture.decoder import Decoder
 from data_preprocessing.preprocessing import get_data
-import time
-import os
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('TkAgg')
 
 config = {
     'batch_size': 16,
@@ -68,6 +69,18 @@ def load_checkpoint(model, optimizer, config):
     else:
         return 0, 0
 
+def plot_losses(steps, train_losses, val_losses):
+    """Plots the training and validation losses over steps."""
+    plt.figure(figsize=(10, 6))
+    plt.plot(steps, train_losses, label='Train Loss')
+    plt.plot(steps, val_losses, label='Validation Loss')
+    plt.xlabel('Steps')
+    plt.ylabel('Loss')
+    plt.title('Training and Validation Loss Over Time')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
 def train():
     train_data, val_data, _, vocab = get_data(config['batch_size'])
     vocab_size = len(vocab)
@@ -83,6 +96,9 @@ def train():
 
     steps_per_epoch = train_data.size(0) // config['block_size'] // config['batch_size']
 
+    train_losses = []  # List to store training losses
+    val_losses = []    # List to store validation losses
+    steps = [] 
     for epoch in range(start_epoch, config['max_epochs']):
         for step in range(start_step if epoch == start_epoch else 0, steps_per_epoch):
             model.train()
@@ -101,9 +117,19 @@ def train():
                 print(f"Epoch {epoch+1}, Step {step}/{steps_per_epoch}, Train Loss: {loss.item():.4f}, Val Loss: {val_loss:.4f}")
                 save_checkpoint(model, optimizer, config, epoch, current_step)
 
+                train_losses.append(loss.item())
+                val_losses.append(val_loss)
+                steps.append(current_step)
         start_step = 0 # Reset step for the new epoch
 
+    # Save the final trained model
+    final_model_path = 'models/transformer_final.pth'
+    torch.save(model.state_dict(), final_model_path)
+    print(f"Final model saved to: {final_model_path}")
     print("Training finished!")
+    
+    # Plot the losses
+    plot_losses(steps, train_losses, val_losses)
     
 if __name__ == '__main__':
     train()
